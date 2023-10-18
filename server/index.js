@@ -8,7 +8,10 @@ import { Server } from "socket.io";
 
 const io = new Server(server, {
   cors: {
-    origin: process.env.NODE_ENV === "production" ? "https://collaborative-paint.vercel.app/" : "*",
+    origin:
+      process.env.NODE_ENV === "production"
+        ? "https://collaborative-paint.vercel.app/"
+        : "*",
   },
 });
 
@@ -31,6 +34,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("clear", () => io.emit("clear"));
+});
+
+app.get("/", (req, res) => {
+  res.send("Wokrs!");
 });
 
 server.listen("3001", () => {
