@@ -1,10 +1,14 @@
 import express from "express";
 import http from "http";
+import cors from "cors";
 
 const app = express();
 const server = http.createServer(app);
 
+
 import { Server } from "socket.io";
+
+app.use(cors());
 
 
 const io = new Server(server, {
