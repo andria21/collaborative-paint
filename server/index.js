@@ -6,12 +6,10 @@ const server = http.createServer(app);
 
 import { Server } from "socket.io";
 
+
 const io = new Server(server, {
   cors: {
-    origin:
-      process.env.NODE_ENV === "production"
-        ? "https://collaborative-paint.vercel.app/"
-        : "*",
+    origin: "*",
   },
 });
 
@@ -36,9 +34,9 @@ io.on("connection", (socket) => {
   socket.on("clear", () => io.emit("clear"));
 });
 
-app.get("/", (req, res) => {
-  res.send("Wokrs!");
-});
+// app.get("/", (req, res) => {
+//   res.send("Wokrs!");
+// });
 
 server.listen("3001", () => {
   console.log("Server listening on port 3001");
