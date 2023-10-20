@@ -7,7 +7,9 @@ import { useEffect, useRef, useState } from "react";
 import ColorPicker from "react-pick-color";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3001");
+const socket = io("https://collaborative-paint-server.vercel.app/");
+
+console.log(socket);
 
 export default function Home() {
   const canvasRef = useRef(null);
