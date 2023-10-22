@@ -10,13 +10,19 @@
   },
   "dependencies": {
     "@uiw/react-color": "^1.4.2",
+    "bufferutil": "^4.0.8",
+    "cors": "^2.8.5",
     "next": "13.5.4",
+    "next-connect": "^1.0.0",
     "react": "^18",
     "react-color": "^2.19.3",
     "react-dom": "^18",
     "react-pick-color": "^2.0.0",
     "socket.io": "^4.7.2",
-    "socket.io-client": "^4.7.2"
+    "socket.io-client": "^4.7.2",
+    "supports-color": "^8.1.1",
+    "utf-8-validate": "^5.0.10",
+    "ws": "^8.14.2"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.16",

@@ -7,9 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import ColorPicker from "react-pick-color";
 import { io } from "socket.io-client";
 
-const socket = io("https://collaborative-paint-server.vercel.app/");
-
-console.log(socket);
+const socket = io("http://localhost:3001"); // , { transports: ["websocket"]}
 
 export default function Home() {
   const canvasRef = useRef(null);
@@ -45,10 +43,15 @@ export default function Home() {
     socket.on("clear", clearCanvas);
 
     socket.on("erase", (eraseData) => {
-      if (!isErasing) return;
-    
       const ctx = canvasRef.current?.getContext("2d");
-      erase(eraseData.prevPoint, eraseData.currentPoint, ctx);
+      erase(
+        eraseData.prevPoint,
+        eraseData.currentPoint,
+        ctx,
+        canvasRef.current
+      );
+      // drawLine(eraseData.prevPoint, eraseData.currentPoint, ctx, "#ffffff", 5);
+      // socket.emit("erase", eraseData);
     });
 
     return () => {
@@ -56,6 +59,7 @@ export default function Home() {
       socket.off("canvas-state-from-server");
       socket.off("draw-line");
       socket.off("clear");
+      socket.off("erase");
     };
   }, [canvasRef, isErasing]);
 
@@ -63,7 +67,8 @@ export default function Home() {
     if (isErasing) {
       const eraseData = { prevPoint, currentPoint };
       socket.emit("erase", eraseData);
-      erase(prevPoint, currentPoint, ctx);
+      erase(prevPoint, currentPoint, ctx, canvasRef.current);
+      // drawLine(prevPoint, currentPoint, ctx, "#ffffff", 5);
     } else {
       const data = { prevPoint, currentPoint, color };
       socket.emit("draw-line", data);
@@ -72,6 +77,27 @@ export default function Home() {
       }
     }
   }
+
+  const exportCanvasAsJPEG = () => {
+    if (canvasRef.current) {
+      const tempCanvas = document.createElement("canvas");
+      tempCanvas.width = canvasRef.current.width;
+      tempCanvas.height = canvasRef.current.height;
+
+      const tempCtx = tempCanvas.getContext("2d");
+      tempCtx.fillStyle = "#FFFFFF";
+      tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+
+      tempCtx.drawImage(canvasRef.current, 0, 0);
+
+      const dataURL = tempCanvas.toDataURL("image/jpeg", 1.0);
+
+      const a = document.createElement("a");
+      a.href = dataURL;
+      a.download = "canvas.jpg";
+      a.click();
+    }
+  };
 
   return (
     <div className="w-screen h-screen bg-white flex justify-center items-center">
@@ -82,6 +108,7 @@ export default function Home() {
           className="p-2 rounded-md border border-black"
           onClick={() => {
             socket.emit("clear");
+            setIsErasing(false);
           }}
         >
           Clear canvas
@@ -95,12 +122,19 @@ export default function Home() {
             setIsErasing(!isErasing);
           }}
         >
-          {isErasing ? "Drawing" : "Erasing"}
+          {isErasing ? "Erasing" : "Drawing"}
+        </button>
+        <button
+          type="button"
+          className="p-2 rounded-md border border-black"
+          onClick={exportCanvasAsJPEG}
+        >
+          Export as JPEG
         </button>
       </div>
       <canvas
-        width={750}
-        height={750}
+        width={1500}
+        height={850}
         className="border border-black rounded-md"
         ref={(ref) => {
           setCanvasRef(ref);

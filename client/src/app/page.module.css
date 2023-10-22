@@ -227,3 +227,8 @@
     transform: rotate(0deg);
   }
 }
+
+
+#canvas {
+  background-color: rebeccapurple;
+}

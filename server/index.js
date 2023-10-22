@@ -10,10 +10,22 @@ import { Server } from "socket.io";
 
 app.use(cors());
 
+// app.use((req, res, next) => {
+
+//   res.setHeader('Access-Control-Allow-Origin', 'https://collaborative-paint-server.vercel.app/');
+
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+
+//   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+
+//   res.setHeader('Access-Control-Allow-Credentials', true);
+
+//   next();
+// });
 
 const io = new Server(server, {
   cors: {
-    origin: "https://collaborative-paint-server.vercel.app/",
+    origin: "*",
   },
 });
 
@@ -27,8 +39,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("erase", (eraseData) => {
-    io.emit("erase", eraseData);
+    // io.emit("erase", eraseData);
     socket.broadcast.emit("erase", eraseData);
+    // console.log(eraseData);
   });
 
   socket.on("canvas-state", (state) => {
@@ -37,10 +50,6 @@ io.on("connection", (socket) => {
 
   socket.on("clear", () => io.emit("clear"));
 });
-
-// app.get("/", (req, res) => {
-//   res.send("Wokrs!");
-// });
 
 server.listen("3001", () => {
   console.log("Server listening on port 3001");
